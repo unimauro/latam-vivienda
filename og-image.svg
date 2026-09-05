@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" font-family="'DejaVu Sans','Arial',sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0e1613"/>
+      <stop offset="1" stop-color="#0a1a17"/>
+    </linearGradient>
+    <linearGradient id="teal" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2dd4bf"/>
+      <stop offset="1" stop-color="#0d9488"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <!-- faint grid -->
+  <g stroke="#18302a" stroke-width="1">
+    <line x1="0" y1="157" x2="1200" y2="157"/><line x1="0" y1="315" x2="1200" y2="315"/><line x1="0" y1="472" x2="1200" y2="472"/>
+    <line x1="300" y1="0" x2="300" y2="630"/><line x1="600" y1="0" x2="600" y2="630"/><line x1="900" y1="0" x2="900" y2="630"/>
+  </g>
+  <!-- eyebrow -->
+  <rect x="80" y="96" width="46" height="5" rx="2.5" fill="url(#teal)"/>
+  <text x="140" y="105" fill="#5eead4" font-size="24" font-weight="700" letter-spacing="6">DATOS · AMÉRICA LATINA · EN USD</text>
+  <!-- title -->
+  <text x="78" y="215" fill="#eef5f3" font-size="104" font-weight="800" letter-spacing="-3">Radar LATAM</text>
+  <text x="80" y="300" fill="#a9c4bd" font-size="38" font-weight="500">Vivienda · Salarios · Pagos digitales · Café</text>
+  <text x="80" y="352" fill="#6f8a83" font-size="27" font-weight="400">Precios comparados de 14 ciudades para tomar mejores decisiones</text>
+  <!-- stat chips -->
+  <g font-weight="700">
+    <g transform="translate(80,420)">
+      <rect width="250" height="128" rx="16" fill="#12211d" stroke="#1e352f"/>
+      <text x="24" y="46" fill="#7f9992" font-size="20" font-weight="600">COMPRA MEDIA · m²</text>
+      <text x="24" y="100" fill="#2dd4bf" font-size="52">$2,010</text>
+    </g>
+    <g transform="translate(350,420)">
+      <rect width="250" height="128" rx="16" fill="#12211d" stroke="#1e352f"/>
+      <text x="24" y="46" fill="#7f9992" font-size="20" font-weight="600">MÁS RENTABLE</text>
+      <text x="24" y="100" fill="#f0a533" font-size="52">7.6%</text>
+    </g>
+    <g transform="translate(620,420)">
+      <rect width="250" height="128" rx="16" fill="#12211d" stroke="#1e352f"/>
+      <text x="24" y="46" fill="#7f9992" font-size="20" font-weight="600">PAGO DIGITAL LÍDER</text>
+      <text x="24" y="100" fill="#8b93f5" font-size="46">Pix · Yape</text>
+    </g>
+    <g transform="translate(890,420)">
+      <rect width="230" height="128" rx="16" fill="#12211d" stroke="#1e352f"/>
+      <text x="24" y="46" fill="#7f9992" font-size="20" font-weight="600">CAFÉ / TAZA</text>
+      <text x="24" y="100" fill="#f472b6" font-size="52">$2.6</text>
+    </g>
+  </g>
+</svg>
