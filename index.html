@@ -1,0 +1,577 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Radar Inmobiliario LATAM</title>
+<meta name="description" content="Precios de vivienda en dólares por m², alquileres y rentabilidad en las principales ciudades de América Latina.">
+<style>
+  html,body{margin:0}
+  body{font:14px system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#eef1f0}
+  img{max-width:100%}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<title>Radar Inmobiliario LATAM</title>
+<meta name="description" content="Precios de vivienda en dólares por m², alquileres y rentabilidad en las principales ciudades de América Latina.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+  :root{
+    --ground:#eef1f0; --surface:#fcfdfc; --surface-2:#f3f6f5; --surface-3:#e8edeb;
+    --ink:#12201d; --ink-2:#41514d; --muted:#6d7d78; --line:#d8e0dd; --line-2:#c3cecb;
+    --accent:#0d9488; --accent-deep:#0b6d64; --accent-soft:#d7ede9;
+    --c1:#0d9488; --c2:#d97706; --c3:#4f46e5; --c4:#db2777;
+    --good:#0f8a5f; --warn:#c47f0a; --bad:#c73a4c;
+    --bar-track:#e3eae8;
+    --shadow:0 1px 2px rgba(18,32,29,.05), 0 8px 24px -14px rgba(18,32,29,.18);
+    --radius:14px;
+  }
+  @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
+    --ground:#0c1311; --surface:#121b19; --surface-2:#18231f; --surface-3:#213029;
+    --ink:#e9f0ee; --ink-2:#a9b8b3; --muted:#7f918c; --line:#26332f; --line-2:#33433d;
+    --accent:#2dd4bf; --accent-deep:#5eead4; --accent-soft:#12312c;
+    --c1:#2dd4bf; --c2:#f0a533; --c3:#8b93f5; --c4:#f472b6;
+    --good:#3ecf8e; --warn:#f0a533; --bad:#f26d7d;
+    --bar-track:#20302b;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px -16px rgba(0,0,0,.6);
+  }}
+  :root[data-theme="dark"]{
+    --ground:#0c1311; --surface:#121b19; --surface-2:#18231f; --surface-3:#213029;
+    --ink:#e9f0ee; --ink-2:#a9b8b3; --muted:#7f918c; --line:#26332f; --line-2:#33433d;
+    --accent:#2dd4bf; --accent-deep:#5eead4; --accent-soft:#12312c;
+    --c1:#2dd4bf; --c2:#f0a533; --c3:#8b93f5; --c4:#f472b6;
+    --good:#3ecf8e; --warn:#f0a533; --bad:#f26d7d;
+    --bar-track:#20302b;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px -16px rgba(0,0,0,.6);
+  }
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);
+    font-family:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    line-height:1.5;-webkit-font-smoothing:antialiased;font-feature-settings:"cv02","cv03";}
+  h1,h2,h3{font-family:"Archivo",system-ui,sans-serif;margin:0;line-height:1.1;letter-spacing:-.01em}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+  .num{font-variant-numeric:tabular-nums}
+  a{color:var(--accent-deep)}
+
+  .wrap{max-width:1220px;margin:0 auto;padding:26px 20px 80px}
+
+  /* Header */
+  header.top{display:flex;flex-wrap:wrap;gap:18px 24px;align-items:flex-end;justify-content:space-between;
+    padding-bottom:20px;border-bottom:1px solid var(--line)}
+  .brand-eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent-deep);
+    font-weight:600;display:flex;align-items:center;gap:8px}
+  .brand-eyebrow::before{content:"";width:22px;height:2px;background:var(--accent);border-radius:2px}
+  h1{font-size:clamp(26px,4.4vw,42px);font-weight:800;margin:.24em 0 .18em;text-wrap:balance}
+  .sub{color:var(--ink-2);max-width:56ch;font-size:14.5px}
+  .head-meta{display:flex;flex-direction:column;gap:10px;align-items:flex-end}
+  .updated{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:7px}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--good);box-shadow:0 0 0 3px color-mix(in srgb,var(--good) 22%,transparent)}
+  .theme-btn{border:1px solid var(--line-2);background:var(--surface);color:var(--ink-2);
+    border-radius:999px;padding:7px 14px;font-size:12.5px;font-weight:600;cursor:pointer;display:flex;gap:7px;align-items:center}
+  .theme-btn:hover{border-color:var(--accent);color:var(--accent-deep)}
+
+  /* KPI row */
+  .kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin:22px 0 8px}
+  @media(max-width:900px){.kpis{grid-template-columns:repeat(3,1fr)}}
+  @media(max-width:560px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px 14px;box-shadow:var(--shadow)}
+  .kpi .lab{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .kpi .val{font-family:"Archivo";font-weight:700;font-size:23px;margin-top:6px;letter-spacing:-.02em}
+  .kpi .val small{font-size:12px;font-weight:600;color:var(--ink-2)}
+  .kpi .cap{font-size:11.5px;color:var(--ink-2);margin-top:3px}
+  .kpi .cap b{color:var(--ink)}
+  .chip-up{color:var(--good)} .chip-down{color:var(--bad)}
+
+  /* Panels */
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:18px 18px 16px;margin-top:16px}
+  .panel-head{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:baseline;justify-content:space-between;margin-bottom:4px}
+  .panel-head h2{font-size:16.5px;font-weight:700}
+  .panel-head .hint{font-size:12px;color:var(--muted)}
+  .grid-2{display:grid;grid-template-columns:1.15fr .85fr;gap:16px}
+  @media(max-width:860px){.grid-2{grid-template-columns:1fr}}
+
+  /* Controls */
+  .controls{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:18px 0 4px}
+  .seg{display:inline-flex;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px;flex-wrap:wrap}
+  .seg button{border:0;background:transparent;color:var(--ink-2);font:inherit;font-size:12.5px;font-weight:600;
+    padding:6px 11px;border-radius:7px;cursor:pointer;white-space:nowrap}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#fff}
+  :root[data-theme="dark"] .seg button[aria-pressed="true"],
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .seg button[aria-pressed="true"]{color:#04110e}}
+  .filters{display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+  .cchip{border:1px solid var(--line-2);background:var(--surface);color:var(--ink-2);border-radius:999px;
+    padding:5px 12px;font-size:12.5px;font-weight:600;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+  .cchip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-deep)}
+  .cchip:hover{border-color:var(--accent)}
+  .flabel{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-right:2px}
+
+  /* Bar chart */
+  .bars{display:flex;flex-direction:column;gap:9px;margin-top:12px}
+  .barrow{display:grid;grid-template-columns:158px 1fr;gap:12px;align-items:center}
+  @media(max-width:560px){.barrow{grid-template-columns:120px 1fr}}
+  .barcity{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;min-width:0}
+  .barcity .fl{font-size:15px;line-height:1}
+  .barcity .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .bartrack{position:relative;height:26px;background:var(--bar-track);border-radius:5px;overflow:hidden}
+  .barfill{position:absolute;left:0;top:0;bottom:0;border-radius:5px;transition:width .5s cubic-bezier(.4,0,.2,1);min-width:2px}
+  .barfill.r4{border-top-right-radius:5px;border-bottom-right-radius:5px}
+  .barval{position:absolute;top:50%;transform:translateY(-50%);font-size:12px;font-weight:600;
+    font-variant-numeric:tabular-nums;color:#fff;right:8px;text-shadow:0 1px 1px rgba(0,0,0,.25)}
+  .barval.out{color:var(--ink);right:auto;text-shadow:none}
+
+  /* Scatter */
+  .scatterwrap{position:relative}
+  svg.scatter{width:100%;height:auto;display:block;overflow:visible}
+  .axline{stroke:var(--line-2);stroke-width:1}
+  .gridline{stroke:var(--line);stroke-width:1;stroke-dasharray:2 4}
+  .axtext{fill:var(--muted);font-size:10.5px;font-family:"IBM Plex Mono"}
+  .axtitle{fill:var(--ink-2);font-size:11px;font-weight:600;font-family:"IBM Plex Sans"}
+  .qlabel{fill:var(--muted);font-size:10px;font-weight:600;font-family:"IBM Plex Sans";text-transform:uppercase;letter-spacing:.05em}
+  .bub{cursor:pointer;transition:opacity .15s}
+  .bublab{fill:var(--ink);font-size:10px;font-weight:600;font-family:"IBM Plex Sans";pointer-events:none}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-size:12px;color:var(--ink-2)}
+  .legend .it{display:flex;align-items:center;gap:6px}
+  .swatch{width:11px;height:11px;border-radius:3px;flex:none}
+
+  /* Table */
+  .tablewrap{overflow-x:auto;margin-top:12px;border:1px solid var(--line);border-radius:12px}
+  table{border-collapse:collapse;width:100%;min-width:820px;font-size:13px}
+  thead th{position:sticky;top:0;background:var(--surface-2);color:var(--ink-2);font-weight:600;
+    text-align:right;padding:10px 12px;border-bottom:1px solid var(--line-2);cursor:pointer;white-space:nowrap;font-size:11.5px;
+    letter-spacing:.02em}
+  thead th:first-child,tbody td:first-child{text-align:left}
+  thead th .ar{opacity:.4;font-size:10px;margin-left:3px}
+  thead th[aria-sort] .ar{opacity:1;color:var(--accent-deep)}
+  tbody td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+  tbody tr:last-child td{border-bottom:0}
+  tbody tr:hover td{background:var(--surface-2)}
+  .cityname{display:flex;align-items:center;gap:8px;font-weight:600;text-align:left}
+  .cityname .fl{font-size:15px}
+  .cityname small{color:var(--muted);font-weight:500}
+  .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11.5px;font-weight:600;font-variant-numeric:tabular-nums}
+  .pill.y-hi{background:color-mix(in srgb,var(--good) 16%,transparent);color:var(--good)}
+  .pill.y-mid{background:color-mix(in srgb,var(--warn) 16%,transparent);color:var(--warn)}
+  .pill.y-lo{background:color-mix(in srgb,var(--muted) 16%,transparent);color:var(--ink-2)}
+
+  /* Tooltip */
+  .tip{position:fixed;z-index:50;pointer-events:none;background:var(--ink);color:var(--ground);
+    border-radius:9px;padding:9px 11px;font-size:12px;box-shadow:0 8px 24px -6px rgba(0,0,0,.4);
+    opacity:0;transition:opacity .12s;max-width:240px;line-height:1.45}
+  .tip b{color:#fff}:root[data-theme="dark"] .tip b{color:var(--ink)}
+  .tip .trow{display:flex;justify-content:space-between;gap:16px}
+  .tip .tk{opacity:.7}
+
+  /* Insights */
+  .insights{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+  @media(max-width:820px){.insights{grid-template-columns:1fr}}
+  .ins{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:10px;padding:14px 15px;box-shadow:var(--shadow)}
+  .ins h3{font-size:13.5px;font-weight:700;margin-bottom:5px;display:flex;align-items:center;gap:7px}
+  .ins p{font-size:12.8px;color:var(--ink-2);margin:0}
+  .ins .tag{font-size:10px;letter-spacing:.05em;text-transform:uppercase;font-weight:700;color:var(--accent-deep)}
+
+  footer{margin-top:34px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:11.5px;line-height:1.6}
+  footer b{color:var(--ink-2)}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="brand-eyebrow">Mercado residencial · América Latina</div>
+      <h1>Radar Inmobiliario LATAM</h1>
+      <p class="sub">Precios de compra en <b>USD por m²</b>, alquileres mensuales y rentabilidad bruta en 14 ciudades clave. Una herramienta para comparar mercados y decidir dónde comprar, alquilar o invertir.</p>
+    </div>
+    <div class="head-meta">
+      <button class="theme-btn" id="themeBtn" aria-label="Cambiar tema"><span id="themeIcon">◐</span> Tema</button>
+      <div class="updated"><span class="dot"></span> Datos estimados · Q3 2026 · en USD</div>
+    </div>
+  </header>
+
+  <section class="kpis" id="kpis" aria-label="Indicadores generales"></section>
+
+  <!-- Ranking chart -->
+  <section class="panel">
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Métrica del gráfico" id="metricSeg">
+        <button data-m="buyCenter" aria-pressed="true">Compra centro</button>
+        <button data-m="buyOutside" aria-pressed="false">Compra afueras</button>
+        <button data-m="rent1" aria-pressed="false">Alquiler 1 amb.</button>
+        <button data-m="rent3" aria-pressed="false">Alquiler 3 amb.</button>
+        <button data-m="yield" aria-pressed="false">Rentabilidad</button>
+        <button data-m="utilities" aria-pressed="false">Servicios/mes</button>
+      </div>
+      <div class="filters" id="countryFilters">
+        <span class="flabel">País</span>
+      </div>
+    </div>
+    <div class="panel-head" style="margin-top:12px">
+      <h2 id="barTitle">Precio de compra · centro (USD/m²)</h2>
+      <span class="hint">Ordenado de mayor a menor · pasa el cursor para el detalle</span>
+    </div>
+    <div class="bars" id="bars"></div>
+  </section>
+
+  <!-- Scatter + services -->
+  <div class="grid-2">
+    <section class="panel scatterwrap">
+      <div class="panel-head">
+        <h2>Mapa de oportunidad</h2>
+        <span class="hint">Precio vs. rentabilidad</span>
+      </div>
+      <p class="sub" style="font-size:12.5px;margin:2px 0 4px">Eje X: precio de compra (USD/m²). Eje Y: rentabilidad bruta del alquiler (%). El tamaño de la burbuja = alquiler de 1 ambiente. <b>Abajo-derecha</b> = caro y poco rentable; <b>arriba-izquierda</b> = barato y rentable.</p>
+      <div id="scatter"></div>
+      <div class="legend" id="scatterLegend"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Costo mensual de vivir</h2>
+        <span class="hint">Alquiler 1 amb. + servicios</span>
+      </div>
+      <p class="sub" style="font-size:12.5px;margin:2px 0 8px">Estimación del desembolso mensual de un hogar unipersonal en el centro: alquiler, servicios básicos (luz, agua, gas) e internet.</p>
+      <div class="bars" id="costBars"></div>
+    </section>
+  </div>
+
+  <!-- Table -->
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Tabla comparativa completa</h2>
+      <span class="hint">Clic en cualquier columna para ordenar</span>
+    </div>
+    <div class="tablewrap">
+      <table id="tbl">
+        <thead>
+          <tr>
+            <th data-k="city" data-t="txt">Ciudad <span class="ar">↕</span></th>
+            <th data-k="buyCenter" data-t="num">Compra centro <span class="ar">↕</span></th>
+            <th data-k="buyOutside" data-t="num">Compra afueras <span class="ar">↕</span></th>
+            <th data-k="rent1" data-t="num">Alq. 1 amb. <span class="ar">↕</span></th>
+            <th data-k="rent3" data-t="num">Alq. 3 amb. <span class="ar">↕</span></th>
+            <th data-k="yield" data-t="num">Rentab. <span class="ar">↕</span></th>
+            <th data-k="payback" data-t="num">Recupero <span class="ar">↕</span></th>
+            <th data-k="utilities" data-t="num">Servicios <span class="ar">↕</span></th>
+            <th data-k="pctChange" data-t="num">Var. 12m <span class="ar">↕</span></th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <p class="sub" style="font-size:11.5px;margin-top:10px">«Recupero» = años para amortizar el precio de compra solo con el alquiler bruto (precio/m² × 85 m² ÷ alquiler anual de 3 amb.). Menor es mejor para el inversor.</p>
+  </section>
+
+  <section class="insights" id="insights"></section>
+
+  <footer>
+    <p><b>Metodología y advertencia.</b> Las cifras son <b>estimaciones ilustrativas</b> en dólares estadounidenses, agregadas de portales inmobiliarios públicos y bases de costo de vida (estilo Numbeo / Properstar / Global Property Guide) para un departamento tipo de ~85 m². Los valores reales varían por barrio, antigüedad, tipo de cambio y momento de la operación. Este panel es una herramienta de <b>orientación comparativa</b>, no una tasación ni asesoría financiera. Verifica con fuentes locales antes de cualquier decisión de compra, alquiler o inversión.</p>
+    <p>Rentabilidad = alquiler anual (3 amb.) ÷ precio de compra de 85 m² en el centro, en bruto (sin gastos, impuestos ni vacancia). Cobertura: Uruguay, Argentina, Chile, Perú, Colombia, México, Brasil, Panamá, Costa Rica, Ecuador, Paraguay.</p>
+  </footer>
+</div>
+
+<div class="tip" id="tip" role="status" aria-live="polite"></div>
+
+<script>
+const DATA = [
+  {city:"Ciudad de México", cc:"MX", fl:"🇲🇽", buyCenter:2950, buyOutside:1950, rent1:780, rent3:1550, yield:6.4, utilities:60, internet:28, pctChange:7.0, salary:780},
+  {city:"Montevideo",       cc:"UY", fl:"🇺🇾", buyCenter:2800, buyOutside:2000, rent1:650, rent3:1300, yield:4.8, utilities:145, internet:35, pctChange:3.5, salary:1150},
+  {city:"Santiago",         cc:"CL", fl:"🇨🇱", buyCenter:2750, buyOutside:2050, rent1:560, rent3:1120, yield:5.0, utilities:130, internet:30, pctChange:1.8, salary:1050},
+  {city:"Buenos Aires",     cc:"AR", fl:"🇦🇷", buyCenter:2450, buyOutside:1750, rent1:480, rent3:950,  yield:3.6, utilities:95, internet:32, pctChange:6.0, salary:640},
+  {city:"Río de Janeiro",   cc:"BR", fl:"🇧🇷", buyCenter:2450, buyOutside:1520, rent1:610, rent3:1280, yield:5.8, utilities:95, internet:25, pctChange:3.8, salary:720},
+  {city:"São Paulo",        cc:"BR", fl:"🇧🇷", buyCenter:2250, buyOutside:1450, rent1:560, rent3:1220, yield:6.0, utilities:90, internet:24, pctChange:4.5, salary:780},
+  {city:"Ciudad de Panamá", cc:"PA", fl:"🇵🇦", buyCenter:2050, buyOutside:1520, rent1:920, rent3:1720, yield:7.6, utilities:115, internet:45, pctChange:2.5, salary:1100},
+  {city:"Guadalajara",      cc:"MX", fl:"🇲🇽", buyCenter:1950, buyOutside:1350, rent1:620, rent3:1180, yield:6.6, utilities:65, internet:26, pctChange:9.0, salary:680},
+  {city:"San José",         cc:"CR", fl:"🇨🇷", buyCenter:1850, buyOutside:1420, rent1:720, rent3:1350, yield:6.1, utilities:125, internet:48, pctChange:3.0, salary:950},
+  {city:"Lima",             cc:"PE", fl:"🇵🇪", buyCenter:1750, buyOutside:1250, rent1:520, rent3:1050, yield:6.2, utilities:70, internet:22, pctChange:4.2, salary:720},
+  {city:"Medellín",         cc:"CO", fl:"🇨🇴", buyCenter:1650, buyOutside:1180, rent1:470, rent3:950,  yield:7.1, utilities:80, internet:20, pctChange:8.5, salary:560},
+  {city:"Bogotá",           cc:"CO", fl:"🇨🇴", buyCenter:1520, buyOutside:1120, rent1:420, rent3:880,  yield:6.6, utilities:90, internet:22, pctChange:5.0, salary:620},
+  {city:"Asunción",         cc:"PY", fl:"🇵🇾", buyCenter:1420, buyOutside:1120, rent1:450, rent3:870,  yield:6.5, utilities:90, internet:30, pctChange:3.2, salary:640},
+  {city:"Quito",            cc:"EC", fl:"🇪🇨", buyCenter:1320, buyOutside:1010, rent1:460, rent3:870,  yield:6.0, utilities:70, internet:32, pctChange:1.5, salary:620},
+];
+const AREA = 85; // m² de referencia
+DATA.forEach(d=>{
+  d.payback = +( (d.buyCenter*AREA) / (d.rent3*12) ).toFixed(1); // años
+  d.costMonth = d.rent1 + d.utilities + d.internet;
+  d.country = ({MX:"México",UY:"Uruguay",CL:"Chile",AR:"Argentina",BR:"Brasil",PA:"Panamá",CR:"Costa Rica",PE:"Perú",CO:"Colombia",PY:"Paraguay",EC:"Ecuador"})[d.cc];
+});
+
+const METRICS = {
+  buyCenter:{label:"Precio de compra · centro (USD/m²)", unit:"USD/m²", fmt:v=>"$"+v.toLocaleString("en-US"), color:"var(--c1)", high:true},
+  buyOutside:{label:"Precio de compra · afueras (USD/m²)", unit:"USD/m²", fmt:v=>"$"+v.toLocaleString("en-US"), color:"var(--c1)", high:true},
+  rent1:{label:"Alquiler · 1 ambiente centro (USD/mes)", unit:"USD/mes", fmt:v=>"$"+v.toLocaleString("en-US"), color:"var(--c3)", high:true},
+  rent3:{label:"Alquiler · 3 ambientes centro (USD/mes)", unit:"USD/mes", fmt:v=>"$"+v.toLocaleString("en-US"), color:"var(--c3)", high:true},
+  yield:{label:"Rentabilidad bruta anual (%)", unit:"%", fmt:v=>v.toFixed(1)+"%", color:"var(--c2)", high:true},
+  utilities:{label:"Servicios básicos (USD/mes)", unit:"USD/mes", fmt:v=>"$"+v.toLocaleString("en-US"), color:"var(--c4)", high:true},
+};
+
+let curMetric = "buyCenter";
+let activeCountries = new Set(); // vacío = todos
+const $ = s=>document.querySelector(s);
+const money = v=>"$"+Math.round(v).toLocaleString("en-US");
+const avg = a=>a.reduce((s,x)=>s+x,0)/a.length;
+
+/* ---------- KPIs ---------- */
+function renderKPIs(){
+  const rows = filtered();
+  const byBuy = [...rows].sort((a,b)=>b.buyCenter-a.buyCenter);
+  const byYield = [...rows].sort((a,b)=>b.yield-a.yield);
+  const avgBuy = avg(rows.map(d=>d.buyCenter));
+  const avgRent = avg(rows.map(d=>d.rent1));
+  const avgChg = avg(rows.map(d=>d.pctChange));
+  const cheap = byBuy[byBuy.length-1], exp = byBuy[0], best = byYield[0];
+  const cards = [
+    {lab:"Compra media · centro", val:money(avgBuy), sub:"por m² · "+rows.length+" ciudades"},
+    {lab:"Alquiler medio · 1 amb.", val:money(avgRent), sub:"por mes"},
+    {lab:"Más rentable", val:best.yield.toFixed(1)+"%", sub:"<b>"+best.city+"</b> "+best.fl},
+    {lab:"Más cara (m²)", val:money(exp.buyCenter), sub:"<b>"+exp.city+"</b> "+exp.fl},
+    {lab:"Más accesible (m²)", val:money(cheap.buyCenter), sub:"<b>"+cheap.city+"</b> "+cheap.fl},
+    {lab:"Variación media 12m", val:(avgChg>=0?"+":"")+avgChg.toFixed(1)+"%", sub:"precios en USD", cls:avgChg>=0?"chip-up":"chip-down"},
+  ];
+  $("#kpis").innerHTML = cards.map(c=>`
+    <div class="kpi">
+      <div class="lab">${c.lab}</div>
+      <div class="val ${c.cls||""}">${c.val}</div>
+      <div class="cap">${c.sub}</div>
+    </div>`).join("");
+}
+
+/* ---------- Country filters ---------- */
+function renderFilters(){
+  const countries = [...new Set(DATA.map(d=>d.cc))]
+    .map(cc=>DATA.find(d=>d.cc===cc))
+    .sort((a,b)=>a.country.localeCompare(b.country));
+  const host = $("#countryFilters");
+  host.querySelectorAll(".cchip").forEach(e=>e.remove());
+  const allBtn = document.createElement("button");
+  allBtn.className="cchip"; allBtn.setAttribute("aria-pressed", activeCountries.size===0);
+  allBtn.textContent="Todos"; allBtn.onclick=()=>{activeCountries.clear();renderAll();};
+  host.appendChild(allBtn);
+  countries.forEach(d=>{
+    const b=document.createElement("button");
+    b.className="cchip"; b.setAttribute("aria-pressed", activeCountries.has(d.cc));
+    b.innerHTML=`${d.fl} ${d.country}`;
+    b.onclick=()=>{activeCountries.has(d.cc)?activeCountries.delete(d.cc):activeCountries.add(d.cc);renderAll();};
+    host.appendChild(b);
+  });
+}
+function filtered(){
+  return activeCountries.size===0 ? DATA.slice() : DATA.filter(d=>activeCountries.has(d.cc));
+}
+
+/* ---------- Bar chart ---------- */
+function renderBars(){
+  const m = METRICS[curMetric];
+  $("#barTitle").textContent = m.label;
+  const rows = filtered().sort((a,b)=> m.high ? b[curMetric]-a[curMetric] : a[curMetric]-b[curMetric]);
+  const max = Math.max(...rows.map(d=>d[curMetric]));
+  $("#bars").innerHTML = rows.map(d=>{
+    const w = Math.max(2,(d[curMetric]/max)*100);
+    const inside = w>26;
+    return `<div class="barrow" data-city="${d.city}" data-metric="${curMetric}">
+      <div class="barcity"><span class="fl">${d.fl}</span><span class="nm">${d.city}</span></div>
+      <div class="bartrack">
+        <div class="barfill r4" style="width:${w}%;background:${m.color}"></div>
+        <span class="barval ${inside?"":"out"}" style="${inside?"":`left:calc(${w}% + 8px)`}">${m.fmt(d[curMetric])}</span>
+      </div>
+    </div>`;
+  }).join("");
+  bindBarTips();
+}
+
+/* ---------- Cost of living bars (stacked) ---------- */
+function renderCost(){
+  const rows = filtered().sort((a,b)=>b.costMonth-a.costMonth);
+  const max = Math.max(...rows.map(d=>d.costMonth));
+  $("#costBars").innerHTML = rows.map(d=>{
+    const total=d.costMonth;
+    const wr=(d.rent1/max)*100, wu=(d.utilities/max)*100, wi=(d.internet/max)*100;
+    const wtot=(total/max)*100, inside=wtot>24;
+    return `<div class="barrow" data-cost="${d.city}">
+      <div class="barcity"><span class="fl">${d.fl}</span><span class="nm">${d.city}</span></div>
+      <div class="bartrack" style="display:flex;gap:2px;background:transparent">
+        <div class="barfill" style="position:relative;width:${wr}%;background:var(--c3)"></div>
+        <div class="barfill" style="position:relative;width:${wu}%;background:var(--c4)"></div>
+        <div class="barfill" style="position:relative;width:${wi}%;background:var(--c2)"></div>
+        <span class="barval out" style="position:relative;align-self:center;margin-left:6px">${money(total)}</span>
+      </div>
+    </div>`;
+  }).join("");
+  $("#costBars").querySelectorAll("[data-cost]").forEach(el=>{
+    el.addEventListener("mousemove",e=>{
+      const d=DATA.find(x=>x.city===el.dataset.cost);
+      showTip(e,`<b>${d.city}</b> ${d.fl}
+        <div class="trow"><span class="tk">Alquiler 1 amb.</span><span>${money(d.rent1)}</span></div>
+        <div class="trow"><span class="tk">Servicios</span><span>${money(d.utilities)}</span></div>
+        <div class="trow"><span class="tk">Internet</span><span>${money(d.internet)}</span></div>
+        <div class="trow" style="border-top:1px solid rgba(255,255,255,.2);margin-top:4px;padding-top:4px"><span class="tk">Total/mes</span><b>${money(d.costMonth)}</b></div>`);
+    });
+    el.addEventListener("mouseleave",hideTip);
+  });
+  $("#scatterLegend").innerHTML = "";
+}
+
+/* ---------- Scatter ---------- */
+function renderScatter(){
+  const rows = filtered();
+  const W=560,H=380, pad={l:52,r:20,t:22,b:44};
+  const xs=rows.map(d=>d.buyCenter), ys=rows.map(d=>d.yield);
+  const xMin=Math.min(...xs)*0.92, xMax=Math.max(...xs)*1.05;
+  const yMin=Math.max(0,Math.min(...ys)-0.8), yMax=Math.max(...ys)+0.6;
+  const rMax=Math.max(...rows.map(d=>d.rent1));
+  const px=v=>pad.l+( (v-xMin)/(xMax-xMin) )*(W-pad.l-pad.r);
+  const py=v=>H-pad.b-( (v-yMin)/(yMax-yMin) )*(H-pad.t-pad.b);
+  const rr=v=>6+ (v/rMax)*16;
+  const xTicks=4,yTicks=4;
+  let g="";
+  // grid + axes
+  for(let i=0;i<=yTicks;i++){const v=yMin+(yMax-yMin)*i/yTicks;const y=py(v);
+    g+=`<line class="gridline" x1="${pad.l}" y1="${y}" x2="${W-pad.r}" y2="${y}"/>
+        <text class="axtext" x="${pad.l-8}" y="${y+3}" text-anchor="end">${v.toFixed(1)}%</text>`;}
+  for(let i=0;i<=xTicks;i++){const v=xMin+(xMax-xMin)*i/xTicks;const x=px(v);
+    g+=`<text class="axtext" x="${x}" y="${H-pad.b+16}" text-anchor="middle">$${Math.round(v/50)*50}</text>`;}
+  g+=`<line class="axline" x1="${pad.l}" y1="${H-pad.b}" x2="${W-pad.r}" y2="${H-pad.b}"/>
+      <line class="axline" x1="${pad.l}" y1="${pad.t}" x2="${pad.l}" y2="${H-pad.b}"/>`;
+  g+=`<text class="axtitle" x="${(pad.l+W-pad.r)/2}" y="${H-6}" text-anchor="middle">Precio de compra · centro (USD/m²)</text>
+      <text class="axtitle" transform="rotate(-90 14 ${(pad.t+H-pad.b)/2})" x="14" y="${(pad.t+H-pad.b)/2}" text-anchor="middle">Rentabilidad bruta (%)</text>`;
+  // quadrant hints
+  g+=`<text class="qlabel" x="${W-pad.r-4}" y="${pad.t+12}" text-anchor="end">◤ caro y rentable</text>
+      <text class="qlabel" x="${pad.l+4}" y="${pad.t+12}">barato y rentable ◥</text>`;
+  // bubbles
+  rows.slice().sort((a,b)=>b.rent1-a.rent1).forEach((d,i)=>{
+    const cx=px(d.buyCenter),cy=py(d.yield),r=rr(d.rent1);
+    const col = d.yield>=6.5 ? "var(--good)" : d.yield>=5.5 ? "var(--c2)" : "var(--c4)";
+    g+=`<circle class="bub" data-city="${d.city}" cx="${cx}" cy="${cy}" r="${r}" fill="${col}" fill-opacity="0.62" stroke="${col}" stroke-width="1.5"/>`;
+    g+=`<text class="bublab" x="${cx}" y="${cy-r-4}" text-anchor="middle">${d.city}</text>`;
+  });
+  $("#scatter").innerHTML=`<svg class="scatter" viewBox="0 0 ${W} ${H}" role="img" aria-label="Dispersión de precio contra rentabilidad">${g}</svg>`;
+  $("#scatterLegend").innerHTML = `
+    <div class="it"><span class="swatch" style="background:var(--good)"></span> Rentab. ≥ 6,5%</div>
+    <div class="it"><span class="swatch" style="background:var(--c2)"></span> 5,5–6,5%</div>
+    <div class="it"><span class="swatch" style="background:var(--c4)"></span> &lt; 5,5%</div>
+    <div class="it" style="color:var(--muted)">Tamaño = alquiler de 1 ambiente</div>`;
+  $("#scatter").querySelectorAll(".bub").forEach(c=>{
+    c.addEventListener("mousemove",e=>{
+      const d=DATA.find(x=>x.city===c.dataset.city);
+      showTip(e,`<b>${d.city}</b> ${d.fl} · ${d.country}
+        <div class="trow"><span class="tk">Compra/m²</span><span>${money(d.buyCenter)}</span></div>
+        <div class="trow"><span class="tk">Rentabilidad</span><span>${d.yield.toFixed(1)}%</span></div>
+        <div class="trow"><span class="tk">Alquiler 1 amb.</span><span>${money(d.rent1)}</span></div>
+        <div class="trow"><span class="tk">Recupero</span><span>${d.payback} años</span></div>`);
+      c.setAttribute("fill-opacity","0.85");
+    });
+    c.addEventListener("mouseleave",()=>{c.setAttribute("fill-opacity","0.62");hideTip();});
+  });
+}
+
+/* ---------- Table ---------- */
+let sortK="buyCenter", sortDir=-1;
+function renderTable(){
+  const rows = filtered().sort((a,b)=>{
+    if(sortK==="city") return sortDir*a.city.localeCompare(b.city);
+    return sortDir*(a[sortK]-b[sortK]);
+  });
+  $("#tbody").innerHTML = rows.map(d=>{
+    const yc = d.yield>=6.5?"y-hi":d.yield>=5.5?"y-mid":"y-lo";
+    const chg = (d.pctChange>=0?"+":"")+d.pctChange.toFixed(1)+"%";
+    return `<tr>
+      <td><span class="cityname"><span class="fl">${d.fl}</span>${d.city} <small>${d.cc}</small></span></td>
+      <td>${money(d.buyCenter)}</td>
+      <td>${money(d.buyOutside)}</td>
+      <td>${money(d.rent1)}</td>
+      <td>${money(d.rent3)}</td>
+      <td><span class="pill ${yc}">${d.yield.toFixed(1)}%</span></td>
+      <td>${d.payback} a</td>
+      <td>${money(d.utilities)}</td>
+      <td style="color:${d.pctChange>=0?'var(--good)':'var(--bad)'};font-weight:600">${chg}</td>
+    </tr>`;
+  }).join("");
+  document.querySelectorAll("thead th").forEach(th=>{
+    th.removeAttribute("aria-sort");
+    if(th.dataset.k===sortK) th.setAttribute("aria-sort", sortDir===1?"ascending":"descending");
+  });
+}
+document.querySelectorAll("thead th").forEach(th=>{
+  th.addEventListener("click",()=>{
+    const k=th.dataset.k;
+    if(sortK===k) sortDir*=-1;
+    else {sortK=k; sortDir = k==="city"?1:-1;}
+    renderTable();
+  });
+});
+
+/* ---------- Insights (computed) ---------- */
+function renderInsights(){
+  const rows=filtered();
+  const byYield=[...rows].sort((a,b)=>b.yield-a.yield);
+  const byPay=[...rows].sort((a,b)=>a.payback-b.payback);
+  const byChg=[...rows].sort((a,b)=>b.pctChange-a.pctChange);
+  const cheapRent=[...rows].sort((a,b)=>a.costMonth-b.costMonth)[0];
+  const best=byYield[0], fast=byPay[0], hot=byChg[0];
+  const cards=[
+    {tag:"Para invertir", t:`${best.fl} ${best.city} lidera en rentabilidad`,
+     p:`Rentabilidad bruta de <b>${best.yield.toFixed(1)}%</b> anual y recupero de ${best.payback} años. ${fast.city} amortiza aún más rápido (${fast.payback} años).`},
+    {tag:"Momentum", t:`${hot.fl} ${hot.city} es el mercado más caliente`,
+     p:`Precios en USD <b>+${hot.pctChange.toFixed(1)}%</b> en 12 meses. Señal de demanda y valorización, pero también de entrada más costosa hoy.`},
+    {tag:"Para vivir", t:`${cheapRent.fl} ${cheapRent.city}, el costo mensual más bajo`,
+     p:`Alquilar 1 ambiente + servicios + internet cuesta unos <b>${money(cheapRent.costMonth)}/mes</b>. Ideal si priorizas gasto corriente sobre plusvalía.`},
+  ];
+  $("#insights").innerHTML=cards.map(c=>`
+    <div class="ins"><div class="tag">${c.tag}</div>
+      <h3>${c.t}</h3><p>${c.p}</p></div>`).join("");
+}
+
+/* ---------- Tooltip helpers ---------- */
+const tip=$("#tip");
+function showTip(e,html){tip.innerHTML=html;tip.style.opacity=1;
+  const pad=14; let x=e.clientX+pad,y=e.clientY+pad;
+  const r=tip.getBoundingClientRect();
+  if(x+r.width>innerWidth-8)x=e.clientX-r.width-pad;
+  if(y+r.height>innerHeight-8)y=e.clientY-r.height-pad;
+  tip.style.left=x+"px";tip.style.top=y+"px";}
+function hideTip(){tip.style.opacity=0;}
+function bindBarTips(){
+  $("#bars").querySelectorAll("[data-city]").forEach(el=>{
+    el.addEventListener("mousemove",e=>{
+      const d=DATA.find(x=>x.city===el.dataset.city);
+      showTip(e,`<b>${d.city}</b> ${d.fl} · ${d.country}
+        <div class="trow"><span class="tk">Compra centro</span><span>${money(d.buyCenter)}/m²</span></div>
+        <div class="trow"><span class="tk">Alquiler 3 amb.</span><span>${money(d.rent3)}/mes</span></div>
+        <div class="trow"><span class="tk">Rentabilidad</span><span>${d.yield.toFixed(1)}%</span></div>
+        <div class="trow"><span class="tk">Var. 12m</span><span>${d.pctChange>=0?"+":""}${d.pctChange}%</span></div>`);
+    });
+    el.addEventListener("mouseleave",hideTip);
+  });
+}
+
+/* ---------- Metric segmented ---------- */
+$("#metricSeg").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b)return;
+  curMetric=b.dataset.m;
+  $("#metricSeg").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));
+  renderBars();
+});
+
+/* ---------- Theme ---------- */
+const root=document.documentElement;
+function setTheme(t){root.setAttribute("data-theme",t);localStorage.setItem("lv-theme",t);
+  $("#themeIcon").textContent = t==="dark"?"☾":"☀";}
+$("#themeBtn").addEventListener("click",()=>{
+  const cur=root.getAttribute("data-theme")|| (matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light");
+  setTheme(cur==="dark"?"light":"dark"); renderScatter();
+});
+(function initTheme(){const s=localStorage.getItem("lv-theme");
+  if(s)setTheme(s); else $("#themeIcon").textContent=matchMedia("(prefers-color-scheme:dark)").matches?"☾":"☀";})();
+
+/* ---------- Master render ---------- */
+function renderAll(){renderFilters();renderKPIs();renderBars();renderCost();renderScatter();renderTable();renderInsights();}
+renderAll();
+addEventListener("resize",()=>{clearTimeout(window._rz);window._rz=setTimeout(renderScatter,150);});
+</script>
+</body>
+</html>
