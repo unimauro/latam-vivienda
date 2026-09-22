@@ -266,6 +266,7 @@
       <button class="navitem" data-view="cafe"><span class="ic">☕</span> Café</button>
     </nav>
     <div class="side-foot">
+      <button class="theme-btn" id="shareBtn"><span aria-hidden="true">🔗</span> Compartir</button>
       <button class="theme-btn" id="themeBtn"><span id="themeIcon">◐</span> Cambiar tema</button>
       <p class="side-note">14 ciudades · 11 países. Cifras estimadas en dólares para orientación comparativa, no asesoría.</p>
     </div>
@@ -690,6 +691,19 @@ function setTheme(t){root.setAttribute("data-theme",t);localStorage.setItem("lv-
 $("#themeBtn").onclick=()=>{const cur=root.getAttribute("data-theme")||(matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light");setTheme(cur==="dark"?"light":"dark");};
 (function(){const s=localStorage.getItem("lv-theme");if(s)root.setAttribute("data-theme",s);
   $("#themeIcon").textContent=(s||(matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light"))==="dark"?"☾":"☀";})();
+
+/* ================= COMPARTIR ================= */
+$("#shareBtn").onclick=async()=>{
+  const url="https://unimauro.github.io/latam-vivienda/";
+  const title="Radar LATAM · Vivienda, Salarios, Pagos y Café";
+  const text="Dashboards en dólares de América Latina: vivienda por m², alquileres, salarios, pagos digitales (Yape, Pix) y café en 14 ciudades.";
+  try{gtag('event','share_click');}catch(e){}
+  if(navigator.share){try{await navigator.share({title,text,url});return;}catch(e){if(e.name==="AbortError")return;}}
+  const btn=$("#shareBtn"),old=btn.innerHTML;
+  try{await navigator.clipboard.writeText(url);btn.innerHTML="✓ Enlace copiado";}
+  catch(e){window.open("https://wa.me/?text="+encodeURIComponent(title+" "+url),"_blank","noopener");btn.innerHTML="↗ Abriendo WhatsApp";}
+  setTimeout(()=>btn.innerHTML=old,1900);
+};
 
 /* ================= CHATBOT TUNKY ================= */
 const chat=$("#chat"),fab=$("#fab"),chatBody=$("#chatBody");
